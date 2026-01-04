@@ -13,12 +13,11 @@ export class RegistrationPage {
 
   constructor(page: Page) {
     this.page = page;
-    // email field - assuming first input is email/phone
-    this.emailField = this.page.locator('input').first();
+    // email field - first text input
+    this.emailField = this.page.locator('input[type="text"]').first();
     // password field
     this.passwordField = this.page.locator('input[type="password"]');
-    // username field - assuming it's the input after password or 3rd input
-    // trying to be more specific: input that is not password and not the first one
+    // username field - second text input
     this.usernameField = this.page.locator('input[type="text"]').nth(1); 
     
     // gender select
@@ -26,7 +25,7 @@ export class RegistrationPage {
     // region select
     this.regionSelect = this.page.locator('select').nth(1); 
     // terms checkbox
-    this.termsCheckbox = this.page.locator('input[type="checkbox"]').first();
+    this.termsCheckbox = this.page.locator('#checkbox');
     this.registerButton = this.page.getByRole('button', { name: /Registruj se/i });
   }
 
@@ -69,17 +68,16 @@ export class RegistrationPage {
     } catch (e) {
       // ignore
     }
-    // accept terms - force click via JS to avoid visibility issues
-    await this.page.evaluate(() => {
-      const checkbox = document.querySelector('input[type="checkbox"]');
-      if (checkbox && checkbox instanceof HTMLElement) {
-        checkbox.click();
-        // also try setting checked property just in case
-        (checkbox as HTMLInputElement).checked = true;
-        // trigger change event
-        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    });
+    // accept terms
+    try {
+      await this.termsCheckbox.check({ force: true });
+    } catch (e) {
+      // fallback to JS click if check fails
+      await this.page.evaluate(() => {
+        const checkbox = document.querySelector('#checkbox');
+        if (checkbox && checkbox instanceof HTMLElement) checkbox.click();
+      });
+    }
   }
 
   // submit form
@@ -89,19 +87,30 @@ export class RegistrationPage {
 
   // check error
   async isMissingEmailErrorVisible(): Promise<boolean> {
-    // check for error message text OR invalid input state
+    // Check for HTML5 validation error (browser tooltip)
+    const isInvalid = await this.emailField.evaluate((el) => {
+      const input = el as HTMLInputElement;
+      return !input.checkValidity();
+    });
+    
+    if (isInvalid) return true;
+
+    // Fallback: check for text error or invalid class
     try {
-        // check for text
-        const errorText = this.page.locator('text=/obavezno|polje/i').first();
+        // check for text - expanded keywords
+        const errorText = this.page.locator('text=/obavezno|polje|unesite|email/i').first();
         if (await errorText.isVisible()) return true;
 
         // check for invalid input class
         const invalidInput = this.page.locator('.error, .is-invalid, .invalid, input[aria-invalid="true"]').first();
         if (await invalidInput.isVisible()) return true;
-
-        return false;
+        
+        // check for toast/alert
+        const toast = this.page.locator('.toast, .alert, [role="alert"]').first();
+        if (await toast.isVisible()) return true;
     } catch (e) {
-        return false;
+        // ignore
     }
+    return false;
   }
 }

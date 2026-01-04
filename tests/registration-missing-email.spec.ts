@@ -8,7 +8,7 @@ test.describe('Functional Test: Registration with Missing Email Field', () => {
     // navigate
     await registrationPage.goto();
     await registrationPage.acceptCookiesIfPresent();
-    
+
     // submit directly - this should trigger validation errors including missing email
     await registrationPage.submit();
     
