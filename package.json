@@ -1,0 +1,11 @@
+{
+  "name": "se302-olx-testing-project",
+  "version": "1.0.0",
+  "description": "Test suite for OLX.ba using Playwright",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.39.0"
+  }
+}
