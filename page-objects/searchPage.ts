@@ -18,16 +18,17 @@ export class SearchPage {
     // listing cards - targeting links to articles
     this.listingCards = this.page.locator('a[href*="/artikal/"]');
 
-    this.cookieAgreeButton = this.page.locator('#qc-cmp2-container button:has-text("SLAŽEM SE"), button:has-text("SLAŽEM SE"), button:has-text("Slažem se")');
+    this.cookieAgreeButton = this.page.locator('button:has-text("SLAŽEM SE"), button:has-text("Slažem se")');
     this.resultsTitle = this.page.locator('h1').filter({ hasText: /rezultata/i }).first();
   }
 
   async acceptCookiesIfPresent() {
     try {
       await this.page.waitForTimeout(2000);
-      if (await this.cookieAgreeButton.first().isVisible({ timeout: 5000 })) {
-        await this.cookieAgreeButton.first().click();
-        await this.page.waitForSelector('#qc-cmp2-container', { state: 'hidden', timeout: 5000 });
+      const button = this.cookieAgreeButton.first();
+      if (await button.isVisible({ timeout: 5000 })) {
+        await button.click();
+        await this.page.waitForTimeout(1000);
       }
     } catch (e) {
       // ignore

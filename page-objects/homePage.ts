@@ -13,7 +13,7 @@ export class HomePage {
   constructor(page: Page) {
     this.page = page;
     // cookie button - targeting the specific CMP button
-    this.cookieAgreeButton = this.page.locator('#qc-cmp2-container button:has-text("SLAŽEM SE"), button:has-text("SLAŽEM SE"), button:has-text("Slažem se")');
+    this.cookieAgreeButton = this.page.locator('button:has-text("SLAŽEM SE"), button:has-text("Slažem se")');
     // search input
     this.searchInput = this.page.locator('input.main-search, input[placeholder*="Pretraga"]');
     // nav links
@@ -35,10 +35,11 @@ export class HomePage {
     try {
       // Wait a bit for the banner to appear
       await this.page.waitForTimeout(2000);
-      if (await this.cookieAgreeButton.first().isVisible({ timeout: 5000 })) {
-        await this.cookieAgreeButton.first().click();
+      const button = this.cookieAgreeButton.first();
+      if (await button.isVisible({ timeout: 5000 })) {
+        await button.click();
         // wait for banner to disappear
-        await this.page.waitForSelector('#qc-cmp2-container', { state: 'hidden', timeout: 5000 });
+        await this.page.waitForTimeout(1000);
       }
     } catch (e) {
       // ignore

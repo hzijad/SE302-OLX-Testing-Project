@@ -12,7 +12,7 @@ export class LoginPage {
   constructor(page: Page) {
     this.page = page;
     this.cookieAgreeButton = this.page.locator(
-      '#qc-cmp2-container button:has-text("SLAŽEM SE"), button:has-text("SLAŽEM SE"), button:has-text("Slažem se")'
+      'button:has-text("SLAŽEM SE"), button:has-text("Slažem se")'
     );
 
     this.usernameOrEmailField = this.page.locator('input[type="text"], input[type="email"]').first();
@@ -24,9 +24,10 @@ export class LoginPage {
   async acceptCookiesIfPresent() {
     try {
       await this.page.waitForTimeout(2000);
-      if (await this.cookieAgreeButton.first().isVisible({ timeout: 5000 })) {
-        await this.cookieAgreeButton.first().click();
-        await this.page.waitForSelector('#qc-cmp2-container', { state: 'hidden', timeout: 5000 });
+      const button = this.cookieAgreeButton.first();
+      if (await button.isVisible({ timeout: 5000 })) {
+        await button.click();
+        await this.page.waitForTimeout(1000);
       }
     } catch (e) {
       // ignore

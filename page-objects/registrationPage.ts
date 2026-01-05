@@ -40,13 +40,14 @@ export class RegistrationPage {
   // accept cookies (copied from HomePage)
   async acceptCookiesIfPresent() {
     try {
-      const cookieButton = this.page.locator('#qc-cmp2-container button:has-text("SLAŽEM SE"), button:has-text("SLAŽEM SE"), button:has-text("Slažem se")');
+      const cookieButton = this.page.locator('button:has-text("SLAŽEM SE"), button:has-text("Slažem se")');
       // Wait a bit for the banner to appear
       await this.page.waitForTimeout(2000);
-      if (await cookieButton.first().isVisible({ timeout: 5000 })) {
-        await cookieButton.first().click();
+      const button = cookieButton.first();
+      if (await button.isVisible({ timeout: 5000 })) {
+        await button.click();
         // wait for banner to disappear
-        await this.page.waitForSelector('#qc-cmp2-container', { state: 'hidden', timeout: 5000 });
+        await this.page.waitForTimeout(1000);
       }
     } catch (e) {
       // ignore

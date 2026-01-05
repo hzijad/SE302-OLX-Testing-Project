@@ -9,6 +9,9 @@ test.describe('Functional: Homepage Navigation Links', () => {
 
     await homePage.acceptCookiesIfPresent();
 
+    // Extra wait for this specific test to ensure UI is settled
+    await page.waitForTimeout(2000);
+
     await page.locator('a', { hasText: /Kategorije|Vozila|Nekretnine/ }).first().waitFor({ timeout: 10000 });
 
     const expectedLinks = ['Kategorije', 'Vozila', 'Nekretnine'];
