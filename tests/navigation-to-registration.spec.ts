@@ -3,7 +3,7 @@ import { HomePage } from '../page-objects/homePage';
 import { RegistrationPage } from '../page-objects/registrationPage';
 
 // normal test: navigate to registration
-test.describe('Functional Test @functional: Navigate to Registration from Homepage', () => {
+test.describe('Functional Test: Navigate to Registration from Homepage', () => {
   test('header registration link opens registration page', async ({ page }) => {
     const homePage = new HomePage(page);
     const registrationPage = new RegistrationPage(page);

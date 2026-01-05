@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { SearchPage } from '../page-objects/searchPage';
 
-test.describe('Functional Test @functional: Verify Search Price Filter with Logically Invalid Range', () => {
+test.describe('Functional Test: Verify Search Price Filter with Logically Invalid Range', () => {
   test('price filter rejects min greater than max', async ({ page }) => {
     const searchPage = new SearchPage(page);
 

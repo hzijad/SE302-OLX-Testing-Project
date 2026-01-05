@@ -7,7 +7,7 @@ const isBotProtectionVisible = async (page: Page): Promise<boolean> => {
   return await blocker.isVisible().catch(() => false);
 };
 
-test.describe('Smoke Test @smoke: Listing Details Page Loads Successfully', () => {
+test.describe('Smoke Test: Listing Details Page Loads Successfully', () => {
   test('listing details page shows title, price, and seller section', async ({ page }) => {
     const searchPage = new SearchPage(page);
 

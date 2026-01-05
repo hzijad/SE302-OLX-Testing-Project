@@ -7,7 +7,7 @@ const isBotProtectionVisible = async (page: Page): Promise<boolean> => {
   return await blocker.isVisible().catch(() => false);
 };
 
-test.describe('Functional Test @functional: Verify Category Navigation and Breadcrumb Consistency', () => {
+test.describe('Functional Test: Verify Category Navigation and Breadcrumb Consistency', () => {
   test('category path shows expected url and breadcrumb', async ({ page }) => {
     const homePage = new HomePage(page);
 

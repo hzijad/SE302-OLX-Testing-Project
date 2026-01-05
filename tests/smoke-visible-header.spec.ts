@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../page-objects/homePage';
 
-test('Smoke: OLX header navigation is visible (POM)', async ({ page }) => {
+test('Smoke Test: OLX header navigation is visible (POM)', async ({ page }) => {
   const home = new HomePage(page);
   await home.goto();
   await home.acceptCookiesIfPresent();

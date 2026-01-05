@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../page-objects/homePage';
 
-test.describe('Functional: Homepage Navigation Links', () => {
+test.describe('Functional Test: Homepage Navigation Links', () => {
   test('Main navigation links are visible', async ({ page }) => {
     const homePage = new HomePage(page);
 

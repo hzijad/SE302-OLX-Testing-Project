@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { RegistrationPage } from '../page-objects/registrationPage';
 
 // smoke test registration page load
-test.describe('Smoke Test @smoke: Registration Page Loads Successfully', () => {
+test.describe('Smoke Test: Registration Page Loads Successfully', () => {
   test('registration page renders and shows register button', async ({ page }) => {
     const registrationPage = new RegistrationPage(page);
 

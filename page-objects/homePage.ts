@@ -9,6 +9,7 @@ export class HomePage {
   private loginLink: Locator;
   private registerLink: Locator;
   private categoriesLink: Locator;
+  public postAdButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -23,6 +24,8 @@ export class HomePage {
     this.loginLink = this.page.locator('a[href="/login"], a[href$="/login"]');
     this.registerLink = this.page.locator('a[href="/register"], a[href$="/register"]');
     this.categoriesLink = this.page.locator('a[href="/kategorije"], a[href$="/kategorije"]');
+    // More robust selector for Post Ad button
+    this.postAdButton = this.page.locator('a[href*="objavi"], button').filter({ hasText: /Objavi oglas/i });
   }
 
   // navigate home
@@ -88,5 +91,9 @@ export class HomePage {
 
   async goToCategories() {
     await this.categoriesLink.first().click();
+  }
+
+  async clickPostAd() {
+    await this.postAdButton.first().click();
   }
 }
