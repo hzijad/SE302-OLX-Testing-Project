@@ -15,7 +15,7 @@ export class HomePage {
     // cookie button - targeting the specific CMP button
     this.cookieAgreeButton = this.page.locator('#qc-cmp2-container button:has-text("SLAŽEM SE"), button:has-text("SLAŽEM SE"), button:has-text("Slažem se")');
     // search input
-    this.searchInput = this.page.locator('input[placeholder="Pretraga"]');
+    this.searchInput = this.page.locator('input.main-search, input[placeholder*="Pretraga"]');
     // nav links
     this.navLinks = this.page.locator('a', { hasText: /Kategorije|Vozila|Nekretnine/ });
 
@@ -47,7 +47,12 @@ export class HomePage {
 
   // check search bar
   async isSearchBarVisible(): Promise<boolean> {
-    return await this.searchInput.isVisible();
+    try {
+      await this.searchInput.first().waitFor({ state: 'visible', timeout: 10000 });
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   // check nav links

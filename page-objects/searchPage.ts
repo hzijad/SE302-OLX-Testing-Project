@@ -73,4 +73,16 @@ export class SearchPage {
       }
     }
   }
+
+  // smoke test helper, avoid repeat clicks
+  async openFirstListing(): Promise<boolean> {
+    try {
+      await this.listingCards.first().waitFor({ state: 'visible', timeout: 15000 });
+      await this.listingCards.first().click();
+      await this.page.waitForURL(/\/artikal\//, { timeout: 15000 });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
