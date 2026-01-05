@@ -6,6 +6,9 @@ export class HomePage {
   private cookieAgreeButton: Locator;
   private searchInput: Locator;
   private navLinks: Locator;
+  private loginLink: Locator;
+  private registerLink: Locator;
+  private categoriesLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -15,6 +18,11 @@ export class HomePage {
     this.searchInput = this.page.locator('input[placeholder="Pretraga"]');
     // nav links
     this.navLinks = this.page.locator('a', { hasText: /Kategorije|Vozila|Nekretnine/ });
+
+    // header links
+    this.loginLink = this.page.locator('a[href="/login"], a[href$="/login"]');
+    this.registerLink = this.page.locator('a[href="/register"], a[href$="/register"]');
+    this.categoriesLink = this.page.locator('a[href="/kategorije"], a[href$="/kategorije"]');
   }
 
   // navigate home
@@ -46,5 +54,33 @@ export class HomePage {
   async areNavigationLinksVisible(): Promise<boolean> {
     const count = await this.navLinks.count();
     return count >= 3;
+  }
+
+  async goToLogin() {
+    await this.loginLink.first().click();
+  }
+
+  async goToRegistration() {
+    await this.registerLink.first().click();
+  }
+
+  async isRegistrationLinkVisible(): Promise<boolean> {
+    try {
+      return await this.registerLink.first().isVisible({ timeout: 10000 });
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async getRegistrationHref(): Promise<string | null> {
+    try {
+      return await this.registerLink.first().getAttribute('href');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async goToCategories() {
+    await this.categoriesLink.first().click();
   }
 }

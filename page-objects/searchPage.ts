@@ -6,6 +6,8 @@ export class SearchPage {
   private searchInput: Locator;
   private searchButton: Locator;
   private listingCards: Locator;
+  private cookieAgreeButton: Locator;
+  private resultsTitle: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -15,6 +17,26 @@ export class SearchPage {
     this.searchButton = this.page.locator('.searchbar-wrapper img[src*="search.svg"]');
     // listing cards - targeting links to articles
     this.listingCards = this.page.locator('a[href*="/artikal/"]');
+
+    this.cookieAgreeButton = this.page.locator('#qc-cmp2-container button:has-text("SLAŽEM SE"), button:has-text("SLAŽEM SE"), button:has-text("Slažem se")');
+    this.resultsTitle = this.page.locator('h1').filter({ hasText: /rezultata/i }).first();
+  }
+
+  async acceptCookiesIfPresent() {
+    try {
+      await this.page.waitForTimeout(2000);
+      if (await this.cookieAgreeButton.first().isVisible({ timeout: 5000 })) {
+        await this.cookieAgreeButton.first().click();
+        await this.page.waitForSelector('#qc-cmp2-container', { state: 'hidden', timeout: 5000 });
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  async gotoWithQuery(query: string) {
+    const encoded = encodeURIComponent(query);
+    await this.page.goto(`https://olx.ba/pretraga?q=${encoded}`);
   }
 
   // search empty
@@ -26,7 +48,7 @@ export class SearchPage {
 
   // check results text
   async hasResultsText(): Promise<boolean> {
-    return await this.page.locator('h1').filter({ hasText: /rezultata/i }).first().isVisible();
+    return await this.resultsTitle.isVisible();
   }
 
   // check results
