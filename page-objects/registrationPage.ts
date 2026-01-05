@@ -10,6 +10,9 @@ export class RegistrationPage {
   private regionSelect: Locator;
   private termsCheckbox: Locator;
   private registerButton: Locator;
+  private pageTitle: Locator;
+  private cloudflareChallengeHeader: Locator;
+  private cloudflareChallengeText: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -27,6 +30,11 @@ export class RegistrationPage {
     // terms checkbox
     this.termsCheckbox = this.page.locator('#checkbox');
     this.registerButton = this.page.getByRole('button', { name: /Registruj se/i });
+    this.pageTitle = this.page.locator('h1').filter({ hasText: /Registracija/i }).first();
+
+    // Cloudflare / bot protection
+    this.cloudflareChallengeHeader = this.page.getByRole('heading', { name: /olx\.ba/i }).first();
+    this.cloudflareChallengeText = this.page.locator('text=/Verifying you are human|review the security of your connection|Just a moment/i').first();
   }
 
   // accept cookies (copied from HomePage)
@@ -48,6 +56,59 @@ export class RegistrationPage {
   // navigate register
   async goto() {
     await this.page.goto('https://olx.ba/register');
+  }
+
+  async isLoaded(): Promise<boolean> {
+    if (await this.isBotProtectionVisible()) return false;
+
+    try {
+      if (await this.pageTitle.isVisible({ timeout: 10000 })) return true;
+    } catch (e) {
+      // ignore
+    }
+
+    // Fallback to presence of primary form controls.
+    try {
+      if (await this.emailField.isVisible({ timeout: 10000 })) return true;
+    } catch (e) {
+      // ignore
+    }
+    return false;
+  }
+
+  async isBotProtectionVisible(): Promise<boolean> {
+    // Common case on olx.ba: Cloudflare “Verifying you are human” interstitial.
+    try {
+      const currentUrl = this.page.url();
+      if (/__cf_chl_|challenges\.cloudflare\.com/i.test(currentUrl)) return true;
+    } catch (e) {
+      // ignore
+    }
+
+    try {
+      if (await this.cloudflareChallengeText.isVisible({ timeout: 2000 })) return true;
+    } catch (e) {
+      // ignore
+    }
+
+    // Fallback heuristic: OLX title + no form controls yet.
+    try {
+      const headerVisible = await this.cloudflareChallengeHeader.isVisible({ timeout: 2000 });
+      const formVisible = await this.emailField.isVisible({ timeout: 2000 }).catch(() => false);
+      if (headerVisible && !formVisible) return true;
+    } catch (e) {
+      // ignore
+    }
+
+    return false;
+  }
+
+  async isRegisterButtonVisible(): Promise<boolean> {
+    try {
+      return await this.registerButton.isVisible({ timeout: 10000 });
+    } catch (e) {
+      return false;
+    }
   }
 
   // fill fields no email
